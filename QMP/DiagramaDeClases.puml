@@ -1,0 +1,142 @@
+@startuml
+
+class Usuario{
+guardarropas
+edad
+sugerenciador
+--
+}
+class Guardarropas{
+prendasSuperiores;
+  prendasInferiores;
+ calzados;
+  ccesorios;
+  --
+  getAtuendos()
+  getPrendas()
+}
+
+abstract class Sugerenciador{
+servicioMeteorologico
+--
+sugerirAtuendo(direccion,guardarropas)
+abstract generarSugerencias(usuario)
+}
+class SugerenciadorBasico extends Sugerenciador{
+
+}
+class SugerenciadorMayores extends Sugerenciador{
+--
+getPrendasValdiad()
+}
+
+interface ServicioMeteorologico{
+--
+obtenerCondicionesClimaticas(direccion)
+}
+class ServicioMeteorologicoAccuWeather implements ServicioMeteorologico{
+ultimasRespuestas
+api
+periodoValidez
+--
+obtenerCondicionesClimaticas(direccion)
+consultarApi(direccion)
+}
+class AccuWeather{
+--
+getWeather(ciudad)
+}
+class EstadoDelTiempo{
+temperatura
+humedad
+--
+}
+class RespuestaMeteorologica{
+expiracion
+estadoDelTiempo
+--
+expiro()
+}
+enum Humedad{
+LLUVIOSO
+SECO
+}
+
+class Prenda{
+  tipo;
+  material;
+  colorPrincipal;
+  colorSegundario;
+  trama;
+  ocasion;
+  empSoportada;
+  humedadSoportada;
+  --
+  soportaTemperatura(temperatura)
+  soportaHumedad(humedad)
+}
+
+class Color{
+codigo
+}
+enum Material{}
+enum Categoria{}
+enum TipoPrenda{
+  ZAPATO(Categoria.CALZADO),
+  CAMISA(Categoria.SUPERIOR),
+  PANTALON(Categoria.INFERIOR),
+  CHOMBA(Categoria.SUPERIOR),
+  COLLAR(Categoria.ACCESORIO);
+  }
+enum Trama{}
+enum Ocasio{}
+
+class Atuendo{
+prendaInferior
+prendaSuperior
+calzado
+accesorio
+--
+crearSastre(sastre)
+esAptoParaTemp(temperatura)
+esAptoParaHumedad(Humedad)
+}
+interface Sastre{
+--
+crearPrendaInferior()
+crearPrendaSuperior()
+crearCalzado()
+}
+class SastreSanJuan implements Sastre{
+}
+class SastreInstitutoJhonson implements Sastre{
+}
+
+
+Prenda --> Material
+Prenda --> TipoPrenda
+Prenda --> Trama
+Prenda --> Ocasio
+Prenda --> Color
+TipoPrenda -r-> Categoria
+
+Atuendo -->"*" Prenda
+Atuendo ..> Sastre
+
+Guardarropas -->"*" Prenda
+
+Usuario --> Guardarropas
+Usuario --> Sugerenciador
+
+Sugerenciador ..> Usuario
+Sugerenciador ..>Atuendo
+Sugerenciador ..> Guardarropas
+Sugerenciador -->ServicioMeteorologico
+
+ServicioMeteorologico .u.> EstadoDelTiempo
+
+ServicioMeteorologicoAccuWeather--> AccuWeather
+ServicioMeteorologicoAccuWeather --> RespuestaMeteorologica
+
+EstadoDelTiempo --> Humedad
+@enduml
